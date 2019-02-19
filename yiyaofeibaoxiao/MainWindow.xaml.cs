@@ -47,11 +47,21 @@ namespace yiyaofeibaoxiao
             if(txb_Menzhen.Text == "") return;
             JineMenZhen = Convert.ToDouble(txb_Menzhen.Text);
             JineMenZhen90 = Math.Round(JineMenZhen * 0.9, 2);
-            tbcMenZhenShenhe.Text = JineMenZhen90 == 0 ? "￥ --" : JineMenZhen90.ToString("￥ ##.00");
+            tbcMenZhenShenhe.Text = 
+                JineMenZhen90 == 0 ? "￥ --" : JineMenZhen90.ToString("￥ ##.00");
         }
 
         private void OnClearClicked(object sender, RoutedEventArgs e)
         {
+            //点击时清除所有填写项内容，重新建立表格。
+            txb_Menzhen.Text = "";
+            txb_Zhuyuan.Text = "";
+            tbcMenZhenShenhe.Text = "";
+            tbcZhuyuanShenhe.Text = "";
+            tbcXiaojiShenhe.Text = "";
+            tbcXiaoji.Text = "";
+            tbcEDing.Text = "";
+            tbcDaxie.Text = "";
 
         }
 
@@ -66,9 +76,9 @@ namespace yiyaofeibaoxiao
             tbcZhuyuanShenhe.Text = JineZhuyuan90 == 0 ? "￥ --" : JineZhuyuan90.ToString("￥ ##.00");
             JineXiaoji = Math.Round((JineMenZhen + JineZhuyuan), 2);
             JineXiaoji90 = Math.Round((JineMenZhen90 + JineZhuyuan90), 2);
-            txb_Xiaoji.Text = JineXiaoji == 0 ? "￥ --" : JineXiaoji.ToString("￥ ##.00");
+            tbcXiaoji.Text = JineXiaoji == 0 ? "￥ --" : JineXiaoji.ToString("￥ ##.00");
             tbcXiaojiShenhe.Text = JineXiaoji90 == 0 ? "￥ --" : JineXiaoji90.ToString("￥ ##.00");
-            txb_eDing.Text = JineXiaoji90.ToString("￥ ##.00");
+            tbcEDing.Text = JineXiaoji90.ToString("￥ ##.00");
             tbcDaxie.Text = ConvertDaxie(JineXiaoji90);
 
         }

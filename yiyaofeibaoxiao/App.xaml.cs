@@ -47,6 +47,11 @@ namespace yiyaofeibaoxiao
             if (excel_file.Exists)
             {
                 var mainWindow = new MainWindow();
+                new huamingcereader(excel_file, out DataSet ExcelFileDs);
+                foreach (DataTable t in ExcelFileDs.Tables)
+                    Debug.Print(t.TableName);
+                GC.Collect();
+
                 mainWindow.Show();
             }
 

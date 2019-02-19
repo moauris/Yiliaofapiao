@@ -17,3 +17,7 @@ C:\Users\MoChen\Documents\Yiyaofei\yiyaofeibaoxiao\yiyaofeibaoxiao\bin\Debug\yiy
 C:\Users\MoChen\Documents\Yiyaofei\yiyaofeibaoxiao\yiyaofeibaoxiao\bin\Debug\yiyaofeibaoxiao.application
 C:\Users\MoChen\Documents\Yiyaofei\yiyaofeibaoxiao\yiyaofeibaoxiao\obj\Debug\yiyaofeibaoxiao.exe.manifest
 C:\Users\MoChen\Documents\Yiyaofei\yiyaofeibaoxiao\yiyaofeibaoxiao\obj\Debug\yiyaofeibaoxiao.application
+C:\Users\MoChen\Documents\Yiyaofei\yiyaofeibaoxiao\yiyaofeibaoxiao\obj\Debug\Interop.MSDAOSP.dll
+C:\Users\MoChen\Documents\Yiyaofei\yiyaofeibaoxiao\yiyaofeibaoxiao\obj\Debug\yiyaofeibaoxiao.csproj.ResolveComReference.cache
+C:\Users\MoChen\Documents\Yiyaofei\yiyaofeibaoxiao\yiyaofeibaoxiao\obj\Debug\userDataBinding.g.cs
+C:\Users\MoChen\Documents\Yiyaofei\yiyaofeibaoxiao\yiyaofeibaoxiao\obj\Debug\userDataBinding.baml

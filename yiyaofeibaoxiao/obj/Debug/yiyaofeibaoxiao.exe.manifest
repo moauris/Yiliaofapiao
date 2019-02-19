@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="yiyaofeibaoxiao.exe" size="24504">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="yiyaofeibaoxiao.exe" size="33208">
       <assemblyIdentity name="yiyaofeibaoxiao" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>g7c/vtm0Cf4fbO37zf+FpJxiUHtpziI464IyYpWO5BU=</dsig:DigestValue>
+        <dsig:DigestValue>4lOgyKFz6fQ8pTRcX4USHaIqhcBWXeiE2zBwmIdyUx4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
