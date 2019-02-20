@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,8 +14,8 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using EXCEL = Microsoft.Office.Interop.Excel;
 
 namespace yiyaofeibaoxiao
 {
@@ -21,222 +24,108 @@ namespace yiyaofeibaoxiao
     /// </summary>
     public partial class MainWindow : Window
     {
-        double JineMenZhen, JineZhuyuan;
-        double JineMenZhen90, JineZhuyuan90;
-        double JineXiaoji, JineXiaoji90;
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void OnMakeNewClicked(object sender, RoutedEventArgs e)
+        {
 
         }
 
-        private void OnSaveClicked(object sender, RoutedEventArgs e)
+        private void OnSearchClicked(object sender, RoutedEventArgs e)
         {
-            PrintDialog printPage = new PrintDialog();
-            if(printPage.ShowDialog() == true)
-            {
-                printPage.PrintVisual(this.WrapperStackPanel, this.Title);
-            }
-        }
-
-        private void OnMenzhenEntered(object sender, RoutedEventArgs e)
-        {
-            Debug.Print("门诊金额输入完成:" + txb_Menzhen.Text);
-            //Validate Input is round 2 number
-            //如果没有输入，return
-            if(txb_Menzhen.Text == "") return;
-            JineMenZhen = Convert.ToDouble(txb_Menzhen.Text);
-            JineMenZhen90 = Math.Round(JineMenZhen * 0.9, 2);
-            tbcMenZhenShenhe.Text = 
-                JineMenZhen90 == 0 ? "￥ --" : JineMenZhen90.ToString("￥ ##.00");
-        }
-
-        private void OnClearClicked(object sender, RoutedEventArgs e)
-        {
-            //点击时清除所有填写项内容，重新建立表格。
-            txb_Menzhen.Text = "";
-            txb_Zhuyuan.Text = "";
-            tbcMenZhenShenhe.Text = "";
-            tbcZhuyuanShenhe.Text = "";
-            tbcXiaojiShenhe.Text = "";
-            tbcXiaoji.Text = "";
-            tbcEDing.Text = "";
-            tbcDaxie.Text = "";
 
         }
 
-        private void OnZhuyuanEntered(object sender, RoutedEventArgs e)
+        private void OnDeleteClicked(object sender, RoutedEventArgs e)
         {
-            Debug.Print("住院金额输入完成:" + txb_Zhuyuan.Text);
-            //Validate Input is round 2 number
-            if (txb_Zhuyuan.Text == "") return;
-
-            JineZhuyuan = Convert.ToDouble(txb_Zhuyuan.Text);
-            JineZhuyuan90 = Math.Round(JineZhuyuan * 0.9, 2);
-            tbcZhuyuanShenhe.Text = JineZhuyuan90 == 0 ? "￥ --" : JineZhuyuan90.ToString("￥ ##.00");
-            JineXiaoji = Math.Round((JineMenZhen + JineZhuyuan), 2);
-            JineXiaoji90 = Math.Round((JineMenZhen90 + JineZhuyuan90), 2);
-            tbcXiaoji.Text = JineXiaoji == 0 ? "￥ --" : JineXiaoji.ToString("￥ ##.00");
-            tbcXiaojiShenhe.Text = JineXiaoji90 == 0 ? "￥ --" : JineXiaoji90.ToString("￥ ##.00");
-            tbcEDing.Text = JineXiaoji90.ToString("￥ ##.00");
-            tbcDaxie.Text = ConvertDaxie(JineXiaoji90);
 
         }
 
-        private void Txb_ValidDouble_TextChanged(object sender, TextChangedEventArgs e)
+        private void OnFixClicked(object sender, RoutedEventArgs e)
         {
-            TextBox textb = (TextBox)sender;
-            TextChange tc = e.Changes.First();
-            int CursorPos = textb.SelectionStart;
-            // When new string cannot be parsed as double
-            if (tc.RemovedLength != 0) return; //When Delete, do nothing
-            var jine = double.TryParse(textb.Text, out double JinE);
-            if (!jine)
-            {
-                //Debug.Print("Invalid");
-                //When Invalid, delete the lastest input
-                textb.Text = textb.Text.Remove(tc.Offset, 1);
-                //Cursor location moved to right most, need to stay.
-                textb.SelectionStart = CursorPos;
-                textb.SelectionLength = 1;
-            }
 
         }
 
-        private static string ConvertDaxie(double Jine)
+        private void OnDatabaseClicked(object sender, RoutedEventArgs e)
         {
-            //This Function Outputs Numerical Values into 
-            //Chinese Capitalized Numericals, 
-            //Maximum 100_000_000 一百万
-            Dictionary<char, string> Daxie = new Dictionary<char, string>();
-            Daxie.Add('1', "壹"); Daxie.Add('2', "贰"); Daxie.Add('3', "叁");
-            Daxie.Add('4', "肆"); Daxie.Add('5', "伍"); Daxie.Add('6', "陆");
-            Daxie.Add('7', "柒"); Daxie.Add('8', "捌"); Daxie.Add('9', "玖");
-            Daxie.Add('0', "零");
-            /*
-             Daxie.Add(10, "拾"); Daxie.Add(100, "佰");
-            Daxie.Add(1000, "仟"); Daxie.Add(10000, "万");
-            Daxie.Add(0.1, "角"); Daxie.Add(0.01, "分"); */
-            //Get Total Digit Before Decimal
-            string Jine00 = Jine.ToString("##.00");
-            string Zhengshu = Jine00.Split('.')[0];
-            string Xiaoshu = Jine00.Split('.')[1];
-            int Len = Zhengshu.Length;
-            if (Len > 10) return "你真有钱";
-            //Top part x万, get x
 
-            StringBuilder sbDaxie = new StringBuilder();
-            if (Len >= 5)
-            {
-                //提取万字以上
-                string AboveWan = Zhengshu.Substring(0, Len - 4);
-                switch (AboveWan.Length)
+        }
+
+        private async void onSyncExcelClicked(object sender, RoutedEventArgs e)
+        {
+            var setProg = new Progress<int>(value => pbMain.Value = value);
+            var setPTotal = new Progress<int>(value => pbMain.Maximum = value);
+            DateTime startTime = DateTime.Now;
+            
+            FileInfo InputFile = new FileInfo(txbSheetDir.Text);
+            DataSet ExcelFileDs =
+                await Task<DataSet>.Run(() =>
                 {
-                    case 3:
-                        sbDaxie.Append(Daxie[AboveWan[0]]);
-                        sbDaxie.Append("佰");
-                        sbDaxie.Append(Daxie[AboveWan[1]]);
-                        if(AboveWan[1] != '0') sbDaxie.Append("拾");
-                        if(AboveWan[2] != '0') sbDaxie.Append(Daxie[AboveWan[2]]);
-                        sbDaxie.Append("万");
-                        break;
-                    case 2:
-                        sbDaxie.Append(Daxie[AboveWan[0]]);
-                        sbDaxie.Append("拾");
-                        if (AboveWan[1] != '0') sbDaxie.Append(Daxie[AboveWan[1]]);
-                        sbDaxie.Append("万");
-                        break;
-                    case 1:
-                        sbDaxie.Append(Daxie[AboveWan[0]]);
-                        sbDaxie.Append("万");
-                        break;
-                }
-                //return sbDaxie.ToString();
-            }
-            //提取万字以下
-            string BelowWan = Zhengshu.Length < 4 ?
-                Zhengshu : Zhengshu.Substring(Len - 4, 4);
-            //Debug.Print(BelowWan);
-            //sbDaxie.Append(BelowWan);
-            switch (BelowWan.Length)
-            {
-                case 4:
-                    if (BelowWan[0] != '0')
+                    if (InputFile.Extension != ".xls")
+                        throw new Exception("指定文件不是xls工作簿。");
+                    if (!InputFile.Exists)
+                        throw new Exception("指定文件不存在。");
+
+                    EXCEL.Application xlApp = new EXCEL.Application();
+                    EXCEL.Workbooks xlWorkbooks = xlApp.Workbooks;
+                    EXCEL.Workbook xlWb = xlWorkbooks.Open(InputFile.FullName);
+                    EXCEL.Sheets xlWorksheets = xlWb.Worksheets;
+                    EXCEL.Worksheet xlSh = xlWorksheets["员工花名册"];
+                    EXCEL.Range xlRg = xlSh.UsedRange;
+
+                    int total_Cell_Count = xlRg.Count;
+                    int total_Row_Count = total_Cell_Count / 4;
+                    ((IProgress<int>)setPTotal).Report(total_Row_Count);
+                    Debug.Print("Total Cell is:" + total_Cell_Count.ToString());
+                    Debug.Print("Total Row is:" + total_Row_Count.ToString());
+                    DataSet output = new DataSet();
+                    DataTable outputT = new DataTable();
+                    int Current_Row = 0;
+                    for (int c = 1; c <= 4; c++)//以4列为准循环
                     {
-                        sbDaxie.Append(Daxie[BelowWan[0]]);
-                        sbDaxie.Append("仟");
+                        var CellValue = (string)(xlRg[c] as EXCEL.Range).Value;
+                        DataColumn newColumn = new DataColumn();
+                        newColumn.DataType = System.Type.GetType("System.String");
+                        newColumn.AllowDBNull = true;
+                        newColumn.Caption = CellValue;
+                        newColumn.ColumnName = CellValue;
+
+                        outputT.Columns.Add(newColumn);
+                        
                     }
-                    if (BelowWan[1] != '0')
+                    for (int c = 5; c <= total_Cell_Count; c++)
                     {
-                        if (BelowWan[0] == '0') sbDaxie.Append('零');
-                        sbDaxie.Append(Daxie[BelowWan[1]]);
-                        sbDaxie.Append("佰");
-                    }
-                    if(BelowWan[2] != '0')
-                    {
-                        if (BelowWan[1] == '0') sbDaxie.Append('零');
-                        sbDaxie.Append(Daxie[BelowWan[2]]);
-                        sbDaxie.Append("拾");
-                    }
-                    if (BelowWan[3] != '0')
-                    {
-                        if (BelowWan[2] == '0') sbDaxie.Append('零');
-                        sbDaxie.Append(Daxie[BelowWan[3]]);
+                        string[] RowVal = new string[4]; // 1 - 4 total: 4
+                        RowVal[c % 4] = xlRg[c].Value.ToString();
+
+                        if (c % 4 == 0)
+                        {
+                            outputT.Rows.Add(
+                                RowVal[0], RowVal[1], RowVal[2], RowVal[3]);
+
+                            ((IProgress<int>)setProg).Report(++Current_Row);
+                            Debug.Print("CurrentRow is:" + Current_Row.ToString());
+                        }
                     }
 
-                    break;
-                case 3:
-                    sbDaxie.Append(Daxie[BelowWan[0]]);
-                    sbDaxie.Append("佰");
-                    sbDaxie.Append(Daxie[BelowWan[1]]);
-                    if (BelowWan[1] != '0') sbDaxie.Append("拾");
-                    if (BelowWan[2] != '0') sbDaxie.Append(Daxie[BelowWan[2]]);
-                    break;
-                case 2:
-                    sbDaxie.Append(Daxie[BelowWan[0]]);
-                    sbDaxie.Append("拾");
-                    if (BelowWan[1] != '0') sbDaxie.Append(Daxie[BelowWan[1]]);
-                    break;
-                case 1:
-                    sbDaxie.Append(Daxie[BelowWan[0]]);
-                    break;
-            }
+                    xlWb.Close();
+                    xlWorkbooks.Close();
+                    xlApp.Quit();
+                    Marshal.ReleaseComObject(xlApp);
+                    Marshal.ReleaseComObject(xlWorkbooks);
+                    Marshal.ReleaseComObject(xlWb);
+                    Marshal.ReleaseComObject(xlWorksheets);
+                    Marshal.ReleaseComObject(xlSh);
+                    Marshal.ReleaseComObject(xlRg);
+                    return output;
+                });
 
-            sbDaxie.Append('圆');
-            //提取小数点以后
-            Debug.Print("Xiaoshu:" + Xiaoshu);
-            if (Xiaoshu == "00")
-            {
-                sbDaxie.Append("整");
-            }
-            else
-            {
-                if (Xiaoshu[0] == '0')
-                {
-                    sbDaxie.Append("零");
-                    sbDaxie.Append(Daxie[Xiaoshu[1]]);
-                    sbDaxie.Append("分");
-                }
-                else
-                {
-                    sbDaxie.Append(Daxie[Xiaoshu[0]]);
-                    sbDaxie.Append("角");
-                    if(Xiaoshu[1] != '0')
-                    {
-                        sbDaxie.Append(Daxie[Xiaoshu[1]]);
-                        sbDaxie.Append("分");
-                    }
-                    else
-                    {
-                        sbDaxie.Append("整");
-                    }
-                    
-                }
-            }
-
-
-            return sbDaxie.ToString();
+            TimeSpan runTime = DateTime.Now - startTime;
+            lbxDebug.Items.Add("关联工作表完毕，用时：" + runTime);
+            GC.Collect();
         }
-
     }
 }
