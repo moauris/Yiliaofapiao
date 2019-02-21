@@ -9,35 +9,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using static yiyaofeibaoxiao.HuaMingCeReader;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation;
+using static YiYao.HuaMingCeReader;
+using System.Windows.Controls.Primitives;
 
-namespace yiyaofeibaoxiao
+namespace YiYao
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
     {
-        string cfg_excelDir;
-
         MainWindow mainWindow = new MainWindow();
         protected override async void OnStartup(StartupEventArgs e)
         {
             //Load Configuration File
             base.OnStartup(e);
             mainWindow.Show();
+            
+            //MessageBox.Show(YiYao.Properties.Settings.Default.sourceSheetPath);
+            //Getting settings from this setting.
 
-            FileInfo excel_file;
+            //从全局设定中找到默认设置
+            FileInfo excel_file = 
+                new FileInfo(YiYao.Properties.Settings.Default.sourceSheetPath);
             //如果未找到配置文件中的元数据工作表位置
             //则要求用户选择元数据工作表
-            if (cfg_excelDir == null)
+
+            if (!excel_file.Exists)
             {
                 OpenFileDialog ofd = new OpenFileDialog();
                 ofd.Filter = "Excel工作表|*.xls";
                 ofd.Title = "请选择作为数据源的Excel表格";
                 Nullable<bool> result = ofd.ShowDialog();
-                cfg_excelDir = ofd.FileName;
-
+                YiYao.Properties.Settings.Default.sourceSheetPath = ofd.FileName; //Application = cannot modify; user = can modify;
                 if (result != true)
                 {
                     MessageBox.Show("Excel文件选择取消，将退出。", "未发现有效Excel文件");
@@ -47,10 +53,11 @@ namespace yiyaofeibaoxiao
 
             }
             
-            excel_file = new FileInfo(cfg_excelDir);
-            if (excel_file.Exists)
+            else
             {
-                mainWindow.txbSheetDir.Text = excel_file.FullName;
+                mainWindow.txbSheetDir.Text = YiYao.Properties.Settings.Default.sourceSheetPath;
+                Application.Current.Properties["Source_Worksheet_Path"] = excel_file.FullName;
+
                 /* Moving provess block to an async area in MainWindow.xaml.cs
                 DateTime startTime = DateTime.Now;
                 HuaMingCeReader hmcReader = new HuaMingCeReader();
@@ -61,19 +68,17 @@ namespace yiyaofeibaoxiao
                 TimeSpan runTime = DateTime.Now - startTime;
                 mainWindow.lbxDebug.Items.Add("关联工作表完毕，用时：" + runTime);
                 GC.Collect();*/
+                mainWindow
+                    .bnStartSync
+                    .RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
             }
 
         }
-
-        private void readStarted(object sender, EventArgs e)
+        protected override void OnExit(ExitEventArgs e)
         {
-            mainWindow.lbxDebug.Items.Add("开始关联工作表，请等待。");
-        }
-
-        private void progressChanged(object sender, hProgressChangedEventArgs e)
-        {
-            
-            mainWindow.lbxDebug.Items.Add(string.Format("{0}/{1}",e.CurrentProgress,e.TotalProgress));
+            MessageBox.Show(YiYao.Properties.Settings.Default.sourceConnStr);
+            YiYao.Properties.Settings.Default.Save();
+            base.OnExit(e);
         }
     }
 

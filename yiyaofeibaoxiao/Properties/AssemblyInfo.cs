@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("yiyaofeibaoxiao")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("yiyaofeibaoxiao")]
+[assembly: AssemblyTitle("YiYao")]
+[assembly: AssemblyDescription("该项目旨在开发一个可以录入报销金额的Windows桌面应用。使用C#语言制作。通过与本地磁盘上的某个xls工作簿相关联，读取用户信息，然后启动界面。在主界面中进行业务选择，可以选择数据表管理、金额录入、数据表导出等操作。")]
+[assembly: AssemblyConfiguration("debug")]
+[assembly: AssemblyCompany("秃神")]
+[assembly: AssemblyProduct("YiYao")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -51,5 +51,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.0.0.1")]
+[assembly: AssemblyFileVersion("0.0.0.1")]

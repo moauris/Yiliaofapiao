@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace yiyaofeibaoxiao
+namespace YiYao
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

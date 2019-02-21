@@ -47,7 +47,7 @@
 <img class="demo" src="resources/demo4.jpg"></p>
 <p>主要添加一个发票的管理（群类），还有一个管理功能，比如关联excel表格以及录入、更新、以及删除新的用户数据条目。<br>
 与该应用相关：在含有“员工花名册”工作页的工作簿未找到时，显示报错还是强制使用app.xaml的config文件进行关联刷新。一般理解上是强制关联，否则退出比较合理，因为该应用必须要绑定有效的工作簿才可以进行正常的工作。（比如身份证号查询）</p>
-<p>目前遇到的一个问题就是使用Microsof.Office.Interop服务读取Excel表格时效率低下。而在部署环境中很有可能没有安装Access，因此Interop服务也不可用。需要寻找某种可以直接映射成DataSet对象的方法。未测试Microsoft.OLEDB.Jet.4.0的数据库引擎是否可以提高查询效率，因开发环境不适应造成。如果使用直接的二进制数据库，将无法进行执行文件与数据源分离，意味着每次写入或者更改数据都必须要重新编译。</p>
+<p>目前遇到的一个问题就是使用<code>Microsof.Office.Interop.Excel</code>服务读取Excel表格时效率低下。而在部署环境中很有可能没有安装Access，因此Interop服务也不可用。需要寻找某种可以直接映射成DataSet对象的方法。未测试<code>Microsoft.JET.OLEDB.4.0</code>的数据库引擎是否可以提高查询效率，因开发环境不适应造成。如果使用直接的二进制数据库，将无法进行执行文件与数据源分离，意味着每次写入或者更改数据都必须要重新编译。</p>
 <p>执行测试：应用启动行为：读取关联excel表格。表格简化为仅录入四项关键数据。关键点是获取读取速度与效率。</p>
 <p>也许需要一个新的界面与Debug信息版界面。</p>
 <p>应用启动阶段行为：
@@ -58,10 +58,32 @@
 <li>读取完毕，显示主菜单</li>
 </ul>
 </p>
-<h3>读取excel用时</h3>
-<p>17列时：00:01:19.76</p>
+<h3>使用Interop服务读取excel用时</h3>
+<p>17列时：00:01:19.76<br>4列时：00:00:12</p>
+<p>是一种极为缓慢而低效的方法。在纯数据取得的场合下，还是希望使用OLEDB驱动引擎。目前论证结论是开发环境可用，而部署环境未知。待测试。</p>
 <h3>异步处理显示进度条</h3>
-<p>似乎无法绕开使用异步处理的方法进行。否则进度条将会在所有任务线程完成之后一起更新。</p>
+<p>似乎无法绕开使用异步处理的方法进行。否则进度条将会在所有任务线程完成之后一起更新。引用异步处理之后，进度条正常显示。如图：<img class="demo" src="resources/yiyaofei_demo5.gif"></p>
+<p>现问题主要有两方面，一个是读取速度过低。期望在3秒以内。
+第二个是如何保存数据表到本地。</p>
+<p>之前调查的结果是只有JET.OLEDB.4.0能够读取32bit的xls格式。
+现在确认本机有数据库驱动ACE.OLEDB.12.0，检查是否可以读取该xls格式。</p>
+<p>如何检查数据库驱动列表，详见该网页：</p>
+<a class="urls" href="http://dbadailystuff.com/list-all-ole-db-providers-in-powershell">List all Ole DB Providers in Powershell</a>
+<p>下载ACE数据库引擎链接（微软官网下载）：</p>
+<a class="urls" href="https://www.microsoft.com/en-US/download/details.aspx?id=13255">Microsoft Access Database Engine 2010 Redistributable</a>
+<p>应该需要重启，试试看重启之后是否还有报错。</p>
+<p>提示引擎在本地机器上未被注册，但事实上确认安装时，将Debug里面的prefer 32 bit取消勾选，即可使用。</p>
+<p>如果还有报错，但不是类似于“在这台机器上未被注册”类型的错误。请检查连接字符串是否有格式等的错误。</p>
+<p>经过调整，已经可以使用数据库引擎。读取速度在一秒以下。</p>
+<img class ="demo" src="resources/yiyaofeidemo6.gif"/>
+<p>在部署的过程中如果可以使用数据库引擎，应当尽量使用数据库引擎。但是可能遇到的问题有：<ol><li>部署环境操作系统为32位，将无法使用ACE数据库引擎。</li><li>部署环境的目标工作簿为32位的工作表，将无法使用ACE数据引擎或引起其他报错。
+</li></ol></p>
+<p>关于是否在报错情况下回滚至采用<code>Interop</code>服务的问题。目前意见是不可以。采用<code>Interop</code>不仅是读取时间长的问题，还有一个
+是无法保证在整个应用报错的情况下解锁内存里的工作簿对象。这样的问题就是会产生大量的Excel临时文件，造成用户困难。极端情况下还会终止其他正在使用的工作簿，造成数据损失。</p>
+<h3>进行配置文件的管理</h3>
+<p>与配置文件相关的文档参考以下</p>
+<a class="urls" href="https://stackoverflow.com/questions/1161459/wpf-application-using-a-global-variable">Application-wise Global Variable in WPF</a>
+<p>目前的计划是将连接字符串与数据库路径等参数导入到<code>Application.Current.Properties</code>中。该动作覆盖设置文件的建立小项目。</p>
 
 
 <a name="v0002"/>

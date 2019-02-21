@@ -1,7 +1,7 @@
-﻿<Application x:Class="yiyaofeibaoxiao.App"
+﻿<Application x:Class="YiYao.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:yiyaofeibaoxiao">
+             xmlns:local="clr-namespace:YiYao">
     <Application.Resources>
          
     </Application.Resources>

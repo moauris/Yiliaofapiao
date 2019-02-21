@@ -270,6 +270,10 @@ footer li {
 	border-top: solid 0.3125em #00478F;
 }
 
+.details code{
+	margin-left: 0.3em;
+	margin-right: 0.3em;
+}
 .details .gittext {
 	color: #FFFFFF;
 }
@@ -278,11 +282,6 @@ footer li {
 	/*display:inline-block;*/
 	margin-top: 1.3em;
 	font-weight: 400;
-}
-
-.details p a {
-	color: #A3CFFF;
-	text-decoration: underline;
 }
 
 .details h2 {
@@ -341,6 +340,12 @@ footer li {
 .details .vcentercontainer:first-child {
 	margin-right: 5%;
 }
+
+.urls {
+	color: #8892AD;
+	text-decoration: underline;
+}
+
 
 .verticalgallery {
 	float: none;
